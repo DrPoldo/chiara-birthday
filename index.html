@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Buon Compleanno Chiara</title>
+
+  <link
+    rel="icon"
+    type="image/x-icon"
+    href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQreCf9GIJnBHYQgRLlmWOU5Q3yfMKMARbJCQ&s"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .section {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 40px 20px;
+
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top {
+      width: 100%;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+      align-items: center;
+    }
+
+    .answer {
+      width: 280px;
+      padding: 15px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(5px);
+
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: center;
+    }
+
+    .answer:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .answer.selected {
+      border-color: #4da3ff;
+      background: rgba(77,163,255,0.35);
+    }
+
+    .bottom {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn {
+      background: #cccccc;
+      color: black;
+    }
+
+    .next-btn {
+      background: #007bff;
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="app"></div>
+
+  <script>
+
+    /*
+      ==================================================
+      STORY DATA
+      ==================================================
+    */
+
+    const sectionsData = [
+
+      {
+        id: "intro",
+
+        title: `
+          Bene bene bene... iniziamo con i convenevoli
+          <br/>
+          Buon Compleanno Chia...
+        `,
+
+        background: "https://www.donnesulweb.it/wp-content/uploads/2021/02/auguri-di-compleanno-divertenti.jpeg",
+
+        answers: [],
+        next: "identity"
+      },
+
+      {
+        id: "identity",
+
+        title: `
+          Aspetta aspetta aspetta,
+          chi mi dice che tu sia realmente Chiara?
+        `,
+
+        background: "https://www.luminosigiorni.it/wp-content/uploads/2015/01/dubbio.jpg",
+
+        answers: [
+          {
+            text: "Fidati sono io",
+            next: "chiara"
+          },
+
+          {
+            text: "Hai ragione, sono Voldemort",
+            next: "voldemort"
+          },
+
+          {
+            text: "Hai ragione, sono Daenerys Targaryen",
+            next: "daenerys"
+          }
+        ]
+      },
+
+      {
+        id: "daenerys",
+
+        title: `
+          Ahhh facciamo dell'ironia.
+          <br><br>
+
+          Ok allora come si chiama tuo marito?
+        `,
+
+        background: "https://i.ytimg.com/vi/-nCGIaIqjPc/maxresdefault.jpg",
+
+        answers: [
+          {
+            text: "Merlino",
+            next: "veryBadEnding"
+          },
+
+          {
+            text: "Drako",
+            next: "veryBadEnding"
+          },
+
+          {
+            text: "Drogo",
+            next: "daenerysEnding"
+          }
+        ]
+      },
+
+      {
+        id: "daenerysEnding",
+
+        title: `
+          Bene visto che sei Daenerys
+          buona giornata.
+          <br><br>
+
+          Bye bye
+          <br>
+          Hasta luego
+          <br>
+          Adios
+        `,
+
+        background: "https://i.giphy.com/kMVKPChbmrmuVzs6Hj.webp",
+
+        answers: [],
+      },
+      {
+        id: "voldemort",
+
+        title: `
+          Ahhh interessante...
+          <br><br>
+
+          Dimmi allora:
+          cosa sono gli Horcrux?
+        `,
+
+        background: "https://preview.redd.it/i-know-voldemort-is-not-perfect-but-what-is-a-nice-thing-v0-v69aadnzrj2f1.jpeg?width=640&crop=smart&auto=webp&s=fe065bd306e4a6c8f7eee0638a3e933d4d72d26f",
+
+        answers: [
+          {
+            text: "Innocui oggetti",
+            next: "voldemortEnding"
+          },
+
+          {
+            text: "Orchetti dei boschi",
+            next: "veryBadEnding"
+          },
+
+          {
+            text: "Strumenti per il punto-croce",
+            next: "veryBadEnding"
+          }
+        ]
+      },
+
+      {
+        id: "voldemortEnding",
+
+        title: `
+          Bene visto che sei Voldemort
+          buona giornata.
+          <br><br>
+
+          Bye bye
+          <br>
+          Hasta luego
+          <br>
+          Adios
+        `,
+
+        background: "https://i.giphy.com/kMVKPChbmrmuVzs6Hj.webp",
+
+        answers: [ ]
+      },
+
+      {
+        id: "veryBadEnding",
+
+        title: `
+          Bene visto che non sei Chiara
+          buona giornata.
+          <br><br>
+
+          Bye bye
+          <br>
+          Hasta luego
+          <br>
+          Adios
+        `,
+
+        background: "https://i.giphy.com/kMVKPChbmrmuVzs6Hj.webp",
+
+        answers: []
+      },
+
+      {
+        id: "chiara",
+
+        title: `
+          No, no, no...
+          non mi fido.
+          <br><br>
+
+          Meglio fare prima una verifica.
+          <br><br>
+
+          Quanti sono gli anelli?
+        `,
+
+        background: "https://live-production.wcms.abc-cdn.net.au/034bc64aad614674a4c069c06e51078f?impolicy=wcms_crop_resize&cropH=2812&cropW=4999&xPos=0&yPos=0&width=862&height=485",
+
+        answers: [
+          {
+            text: "1",
+            next: "wrongRings"
+          },
+
+          {
+            text: "10",
+            next: "wrongRings"
+          },
+
+          {
+            text: "20",
+            next: "japanese"
+          },          
+
+          {
+            text: "30",
+            next: "wrongRings"
+          },
+
+          {
+            text: "Quali anelli?",
+            next: "wrongRings"
+          }
+        ]
+      },
+
+      {
+        id: "wrongRings",
+
+        title: `
+          Direi che abbiamo un grosso problema...
+        `,
+
+        background: "https://static.tecnichenuove.it/animalidacompagnia/2023/04/capibara-e1682088652412.jpg",
+
+        answers: [],
+        next: "veryBadEnding"
+      },
+
+      {
+        id: "japanese",
+
+        title: `
+          人生で一番大切なことは何ですか？
+        `,
+
+        background: "https://cdn.sanity.io/images/24oxpx4s/prod/79b65d3a463e147d91c96b11737b4dfa5cbf58ce-5184x2951.jpg?auto=format&fit=crop&q=70&ratio=1",
+
+        answers: [
+          {
+            text: "怪我をせずに転ぶ",
+            next: "wrongJapanese"
+          },
+
+          {
+            text: "七転び八起き。",
+            next: "final"
+          },
+
+          {
+            text: "転ばない",
+            next: "wrongJapanese"
+          }
+        ]
+      },
+
+      {
+        id: "wrongJapanese",
+
+        title: `
+          Direi che abbiamo un grosso problema...
+        `,
+
+        background: "https://static.tecnichenuove.it/animalidacompagnia/2023/04/capibara-e1682088652412.jpg",
+
+        answers: [],
+        next: "veryBadEnding"
+      },      
+
+      {
+        id: "final",
+
+        title: `
+          Ok,
+          potrebbe essere che tu sia
+          effettivamente Chiara...
+          <br><br>
+
+          Nel qual caso...
+          <br><br>
+
+          Buon Compleanno!!!
+          <br>
+
+          In ritardo 🎉
+        `,
+
+        background: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHRidzVsam9oZ3ZleTU3MXlrdDhyaDhxbXpvenVuanY3N2EzMTBwdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Qvns6NmhC1MBLKGbL1/giphy.gif",
+
+        answers: [],
+        next: "explain-1"
+      },
+      
+      {
+        id: "explain-1",
+
+        title: `
+          Ok, il tuo regalo è una moodbox (me l'hanno caldamente consigliata)
+          <br><br>
+        `,
+
+        background: "https://www.focus.it/site_stored/imgs/0001/035/gatto.incazzato.jpg",
+
+        answers: [],
+        next: "explain-2"
+      },
+      {
+        id: "explain-2",
+
+        title: `
+          In base alle risposte che darai alle prossime domande la moodbox si trasformerà in qualcosa adatto al tuo mood.
+          <br><br>
+        `,
+
+        background: "https://www.focus.it/site_stored/imgs/0001/035/gatto.incazzato.jpg",
+
+        answers: [],
+        next: "explain-3"
+      },
+      {
+        id: "explain-3",
+
+        title: `
+          Del tipo se hai voglia di fare sport estremi la moodbox potrebbe trosformarsi in una scatola di camomilla...
+          si sa gli sport estremi sono pericolosi
+          <br><br>
+        `,
+
+        background: "https://ilsuperuovo.it/wp-content/uploads/2018/11/gatto.jpg",
+
+        answers: [],
+        next: "mood"
+      },            
+
+      {
+        id: "mood",
+
+        title: `
+          Bene, qual'è il tuo mood?
+        `,
+
+        background: "https://www.ryangroup.org/blog/wp-content/uploads/2023/07/Mood-Meter.jpg",
+
+        answers: [
+          {
+            text: "voglio spaccare tutto",
+            next: "break"
+          },
+          {
+            text: "need to chill",
+            next: "chill"
+          },
+          {
+            text: "wanna have fun",
+            next: "journey"
+          },
+          {
+            text: "ho fame",
+            next: "eat"
+          }          
+
+        ],
+      },
+      
+      {
+        id: "break",
+
+        title: `
+          In che modo vuoi spaccare cose/persone?
+        `,
+
+        background: "https://upload.wikimedia.org/wikipedia/it/4/49/L%27incredibile_Hulk_%282008%29.jpg",
+
+        answers: [
+          {
+            text: "in real life",
+            next: "irl-break"
+          },
+          {
+            text: "nel mondo virtuale",
+            next: "virtual-break"
+          }
+
+        ],
+        next: "break"
+      },
+      {
+        id: "irl-break",
+
+        title: `
+          Complimenti hai vinto 2 mesi di corso di kickboxing.
+          Invia una mail con oggetto kickbox a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://hips.hearstapps.com/hmg-prod/images/muay-thai-boxer-during-training-session-practicing-royalty-free-image-681720607-1558630345.jpg?crop=0.584xw:0.876xh;0.123xw,0.0933xh&resize=640:*",
+
+        answers: [
+          {
+            text: "mmm, troppo faticoso",
+            next: "retry"
+          },
+          {
+            text: "siii spacco culi",
+            next: "end"
+          }
+
+        ],
+        
+      },      
+      {
+        id: "virtual-break",
+
+        title: `
+          Sei la fortunata vincitrice di una copia di Crimson Desert.
+          Invia una mail con oggetto crimson a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://www.mensjournal.com/.image/NDI6MDAwMDAwMDAxMTIzNzAy/crimson-desert-new-trailer-gamescom-opening-night-live-2023.jpg?profile=w2560&ar=16-9",
+
+        answers: [
+          {
+            text: "mmm, non mi piace",
+            next: "retry"
+          },
+          {
+            text: "figata pazzesca!!!",
+            next: "end"
+          }
+
+        ],
+        
+      },
+      
+      {
+        id: "chill",
+
+        title: `
+          Dove preferisci cillartela?
+        `,
+
+        background: "https://preview.redd.it/attn-creature-collectors-cast-n-chill-is-everything-v0-mjcpqp1jvkag1.jpeg?auto=webp&s=4608bd9c2b6922cf39522db949f9af0d7bda1958",
+
+        answers: [
+          {
+            text: "divano",
+            next: "divano"
+          },
+          {
+            text: "poltrona",
+            next: "poltrona"
+          }
+
+        ],
+        
+      },
+      
+      {
+        id: "divano",
+
+        title: `
+          Solo chill o qualcosa di più?
+        `,
+
+        background: "https://arredimadonia.it/wp-content/uploads/2020/02/poltrone-divano-1280x640.jpg",
+
+        answers: [
+          {
+            text: "solo chill",
+            next: "extra-chill"
+          },
+          {
+            text: "qualcosa di più",
+            next: "virtual-break"
+          }
+
+        ],
+        
+      },
+
+      {
+        id: "extra-chill",
+
+        title: `
+          L'inverno sta arrivando...ecco per te una fantastica felpona con i dinosauri. 
+          Invia una mail con oggetto raptors a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://fanatics.frgimages.com/toronto-raptors/mens-mitchell-and-ness-purple-toronto-raptors-hardwood-classics-big-and-tall-pullover-hoodie_ss5_p-201070079+pv-2+u-9qrbdcylepvtk9uaaymk+v-fheazbq4yplfhqj8qvvm.jpg?_hv=2&w=1018",
+
+        answers: [
+          {
+            text: "naaaa, il viola non mi dona",
+            next: "retry"
+          },
+          {
+            text: "i like it",
+            next: "end"
+          }
+
+        ],
+        
+      },      
+
+      {
+        id: "poltrona",
+
+        title: `
+          Siamo lieti di annunciarle che potrà entrare gratis al cinema per un anno intero.
+          Invii una mail con oggetto cinema a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://www.thespacecinema.it/-/media/the-space-cinema/al-cinema/informazioni-cinema/al-cinema_foto-laser.jpg?h=665&iar=0&w=1400&rev=c2ead9d0a99d4f889ae68abb908ada86",
+
+        answers: [
+          {
+            text: "yesssa",
+            next: "end"
+          },
+          {
+            text: "carino, ma che altre possibilità c'erano?",
+            next: "retry"
+          }
+
+        ],
+        
+      },
+      {
+        id: "eat",
+
+        title: `
+          quanta fame hai?
+        `,
+
+        background: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2e/83/2e/1c/salaam-bombay-indian.jpg?w=900&h=500&s=1",
+
+        answers: [
+          {
+            text: "tanta",
+            next: "eat-a-lot"
+          },
+          {
+            text: "il giusto",
+            next: "eat-right"
+          }
+
+        ],
+        
+      },
+      {
+        id: "eat-a-lot",
+
+        title: `
+          Il mio kebabbaro di fiducia sarà ben lieto di sfamarla.
+          Invii una mail con oggetto "kebab" a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://media-assets.lacucinaitaliana.it/photos/61fb1434f6b806549a638985/16:9/w_1920,c_limit/migliori-kebab-milano1.jpg",
+
+        answers: [
+          {
+            text: "pancia mia fatti capanna",
+            next: "end"
+          },
+          {
+            text: "non mi pice il kebab",
+            next: "retry"
+          }
+
+        ],
+        
+      },            
+      {
+        id: "eat-right",
+
+        title: `
+          Speriamo di farle cosa gradita prenotando un tavolo al ristorante Venissa.
+          Invii una mail con oggetto "cena" a leonardo.ciman@gmail.com
+          per ottenere il tuo regalo.
+        `,
+
+        background: "https://www.venissa.it/wp-content/uploads/2021/09/Venissa-Drone-6-scaled.jpg",
+
+        answers: [
+          {
+            text: "yesssa",
+            next: "end"
+          },
+          {
+            text: "carino, ma che altre possibilità c'erano?",
+            next: "retry"
+          }
+
+        ],
+        
+      },
+      {
+        id: "journey",
+
+        title: `
+        Cosa preferisci?
+        `,
+
+        background: "https://hips.hearstapps.com/hmg-prod/images/viaggi-da-fare-1527371917.jpg",
+
+        answers: [
+          {
+            text: "formaggio",
+            next: "france"
+          },
+          {
+            text: "te",
+            next: "england"
+          }
+
+        ],
+        
+      },
+      {
+        id: "france",
+
+        title: `
+        Bene si parte il 26 giugno, si fa scalo a parigi, 
+        poi a Dublino per il concerto Di Florence + the machine.
+        Casualmente il giorno del concerto è il compleanno anche di qualcuna'altro,
+        potrebbe trovarselo in aereo... ma casualmente.
+        Invii una mail con oggetto "francia-concerto" a leonardo.ciman@gmail.com
+        per ottenere il tuo regalo.        
+        `,
+
+        background: "https://offloadmedia.feverup.com/secretldn.com/wp-content/uploads/2025/08/29110905/GettyImages-1397441598-1024x683.jpg",
+
+        answers: [
+          {
+            text: "non vedo l'ora",
+            next: "end"
+          },
+          {
+            text: "che sfacchinata, no grazie",
+            next: "retry"
+          }
+
+        ],
+        
+      },      
+      {
+        id: "england",
+
+        title: `
+        Bene si parte il 26 giugno, si fa scalo in inghilterra, 
+        poi a Dublino per il concerto Di Florence + the machine.
+        Casualmente il giorno del concerto è il compleanno anche di qualcuna'altro,
+        potrebbe trovarselo in aereo... ma casualmente.
+        Invii una mail con oggetto "francia-concerto" a leonardo.ciman@gmail.com
+        per ottenere il tuo regalo.        
+        `,
+
+        background: "https://offloadmedia.feverup.com/secretldn.com/wp-content/uploads/2025/08/29110905/GettyImages-1397441598-1024x683.jpg",
+
+        answers: [
+          {
+            text: "non vedo l'ora",
+            next: "end"
+          },
+          {
+            text: "che sfacchinata, no grazie",
+            next: "retry"
+          }
+
+        ],
+        
+      },
+      {
+        id: "retry",
+
+        title: `
+        Ok, ok, riproviamo un'altra volta
+        `,
+
+        background: "https://picsum.photos/id/1015/1920/1080",
+
+
+        next: "mood"
+        
+      },
+      {
+        id: "end",
+
+        title: `
+        Speriamo che queta moodbox sia stata di suo gradimento e
+        la inviatiamo a visitare il nostro sito moodbox.com
+        per visionare tutti i nostri servizi.
+        `,
+
+        background: "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=768,fit=crop/YbNJB6QxGDSzZDlp/logo-moodbox-para-web-1-mnlJW06qWgH1a3BV.png",
+    
+      }            
+
+
+    ];
+
+
+    /*
+      ==================================================
+      STATE
+      ==================================================
+    */
+
+    let currentSectionId = "intro";
+
+    const historyStack = [];
+
+
+    /*
+      ==================================================
+      HELPERS
+      ==================================================
+    */
+
+    function getSectionById(id) {
+
+      return sectionsData.find(section => section.id === id);
+
+    }
+
+
+    /*
+      ==================================================
+      RENDER
+      ==================================================
+    */
+
+    function renderSection(sectionId) {
+
+      const data = getSectionById(sectionId);
+
+      const app = document.getElementById("app");
+
+      app.innerHTML = `
+
+        <section
+          class="section"
+          style="background-image:url('${data.background}')"
+        >
+
+          <div class="overlay"></div>
+
+          <div class="content" data-next="${data.next || ""}">
+
+            <div class="top">
+
+              <div class="title">
+                ${data.title}
+              </div>
+
+              ${
+                data.answers && data.answers.length
+                  ? `
+                    <div class="answers">
+
+                      ${data.answers.map(answer => `
+
+                        <div
+                          class="answer"
+                          data-next="${answer.next || ""}"
+                        >
+                          ${answer.text}
+                        </div>
+
+                      `).join("")}
+
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+            <div class="bottom">
+
+              ${
+                historyStack.length > 0
+                  ? `
+                    <button class="back-btn">
+                      Back
+                    </button>
+                  `
+                  : ""
+              }
+
+              ${
+                data.next || (data.answers && data.answers.length > 0)
+                  ? `
+                    <button class="next-btn">
+                      Next
+                    </button>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </div>
+
+        </section>
+      `;
+
+      attachEvents();
+
+    }
+
+
+    /*
+      ==================================================
+      EVENTS
+      ==================================================
+    */
+
+    function attachEvents() {
+
+      /*
+        ANSWER SELECTION
+      */
+
+      document
+        .querySelectorAll(".answer")
+        .forEach(answer => {
+
+          answer.addEventListener("click", () => {
+
+            document
+              .querySelectorAll(".answer")
+              .forEach(a => {
+                a.classList.remove("selected");
+              });
+
+            answer.classList.add("selected");
+
+          });
+
+        });
+
+
+      /*
+        NEXT BUTTON
+      */
+
+      const nextBtn = document.querySelector(".next-btn");
+
+      if (nextBtn) {
+
+        nextBtn.addEventListener("click", () => {
+
+          let selected = document.querySelector(".answer.selected");
+
+          /*
+            Require selection
+          */
+
+          if (!selected) {
+            selected = document.querySelector(".content");
+          }
+
+          const nextSectionId = selected.dataset.next;
+
+          if (!nextSectionId) {
+
+            alert("Select an answer");
+
+            return;
+
+          }
+
+          historyStack.push(currentSectionId);
+
+          currentSectionId = nextSectionId;
+
+          renderSection(currentSectionId);
+
+        });
+
+      }
+
+
+      /*
+        BACK BUTTON
+      */
+
+      const backBtn = document.querySelector(".back-btn");
+
+      if (backBtn) {
+
+        backBtn.addEventListener("click", () => {
+
+          if (historyStack.length === 0) {
+            return;
+          }
+
+          currentSectionId = historyStack.pop();
+
+          renderSection(currentSectionId);
+
+        });
+
+      }
+
+    }
+
+
+    /*
+      ==================================================
+      START
+      ==================================================
+    */
+
+    renderSection(currentSectionId);
+
+  </script>
+
+</body>
+</html>
