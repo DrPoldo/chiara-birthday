@@ -139,7 +139,47 @@
     button:hover {
       opacity: 0.9;
     }
+@media (max-width: 768px) {
 
+  html,
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .section {
+    height: auto;
+    min-height: 100dvh;
+
+    padding:
+      30px
+      20px
+      calc(30px + env(safe-area-inset-bottom));
+  }
+
+  .bottom {
+    margin-bottom: env(safe-area-inset-bottom);
+    padding-bottom: 10px;
+
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 1.7rem;
+  }
+
+  .answer {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+
+}
   </style>
 </head>
 
